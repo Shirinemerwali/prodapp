@@ -14,39 +14,18 @@ function Todos() {
   function addTodo() {
     if (!text.trim()) return;
 
-    if (editingId) {
-      // EDIT MODE
-      setTodos(
-        todos.map((todo) =>
-          todo.id === editingId
-            ? {
-                ...todo,
-                title: text,
-                description: description,
-                estimate: estimate,
-                category: category,
-                deadline: deadline,
-              }
-            : todo
-        )
-      );
-      setEditingId(null);
-    } else {
-      // CREATE NEW TODO
-      const newTodo = {
-        id: uuidv4(),
-        title: text,
-        description: description,
-        estimate: estimate,
-        category: category,
-        deadline: deadline,
-        completed: false,
-      };
+    const newTodo = {
+      id: uuidv4(),
+      title: text,
+      description,
+      estimate,
+      category,
+      deadline,
+      completed: false,
+    };
 
-      setTodos([...todos, newTodo]);
-    }
+    setTodos([...todos, newTodo]);
 
-    // RESET FIELDS
     setText("");
     setDescription("");
     setEstimate("");
@@ -78,7 +57,6 @@ function Todos() {
 
   return (
     <div className="todos-page">
-
       <div className="todo-input-section">
         <input
           type="text"
@@ -122,14 +100,13 @@ function Todos() {
         />
 
         <button onClick={addTodo} className="todo-add-btn">
-          {editingId ? "Save changes" : "Add todo"}
+          Add todo
         </button>
       </div>
 
       <ul className="todo-list">
         {todos.map((todo) => (
           <li key={todo.id} className="todo-item">
-
             <input
               type="checkbox"
               checked={todo.completed}
@@ -148,24 +125,15 @@ function Todos() {
             {todo.description} <br />
             Time estimate: {todo.estimate} minutes <br />
             Category: {todo.category} <br />
-            Deadline: {todo.deadline}
-            <br />
+            Deadline: {todo.deadline} <br />
 
-            <button onClick={() => deleteTodo(todo.id)}>
-              Delete
-            </button>
-
-            <button onClick={() => startEditing(todo.id)}>
-              Edit
-            </button>
-
+            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            <button onClick={() => startEditing(todo.id)}>Edit</button>
           </li>
         ))}
       </ul>
-
     </div>
   );
 }
 
 export default Todos;
-
