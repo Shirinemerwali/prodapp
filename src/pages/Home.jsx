@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../pages/Home.css";
 
 function Home() {
   const [showLogin, setShowLogin] = useState(false);
@@ -8,7 +9,7 @@ function Home() {
 
     <div className="home_container">
         <div className= "home_leftside">
-            <img src="" alt="Prodapp illustration" />
+            <img src="./home_pic.png" alt="Prodapp illustration" />
         </div>
         <div className="home_rightside">
             {!showLogin && !showSignup && (
