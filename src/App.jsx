@@ -9,7 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Todos from "./pages/Todos";
 import Habits from "./pages/Habits";
 
-import { getCurrentUser, logout as storageLogout } from "./utils/storage";
+import { getCurrentUser, logout as apiLogout } from "./utils/storage";
 import Events from "./pages/Events";
 
 function RequireAuth({ isLoggedIn, children }) {
@@ -75,13 +75,20 @@ function Layout({ isLoggedIn, currentUser, onLogout, onLogin }) {
 }
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
-  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(getCurrentUser()));
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
-    const user = getCurrentUser();
-    setCurrentUser(user);
-    setIsLoggedIn(Boolean(user));
+    (async () => {
+      try {
+        const user = await getCurrentUser();
+        setCurrentUser(user);
+        setIsLoggedIn(Boolean(user));
+      } finally {
+        setIsAuthLoading(false);
+      }
+    })();
   }, []);
 
   function handleLogin(user) {
@@ -89,20 +96,22 @@ function App() {
     setIsLoggedIn(true);
   }
 
-  function handleLogout() {
-    storageLogout();
+  async function handleLogout() {
+    await apiLogout();
     setCurrentUser(null);
     setIsLoggedIn(false);
   }
 
   return (
     <Router>
-      <Layout
-        isLoggedIn={isLoggedIn}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        onLogin={handleLogin}
-      />
+      {isAuthLoading ? null : (
+        <Layout
+          isLoggedIn={isLoggedIn}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          onLogin={handleLogin}
+        />
+      )}
     </Router>
   );
 }
