@@ -1,12 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-function Navbar() {
+function Navbar({ user, onLogout }) {
+  const navigate = useNavigate();
+
+    function handleLogout() {
+    onLogout?.();
+    navigate("/", { replace: true });
+  }
+
   return (
-    <nav style={{ padding: "1rem", display: "flex", gap: "1rem" }}>
-      <Link to="/">Home</Link>
+    <nav style={{ padding: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}>
+      <Link to="/dashboard">Dashboard</Link>
       <Link to="/todos">Todos</Link>
       <Link to="/habits">Habits</Link>
       <Link to="/events">Events</Link>
+
+    <div style={{ marginLeft: "auto", display: "flex", gap: "1rem", alignItems: "center" }}>
+        {user?.name && <span style={{ opacity: 0.8 }}>Hej, {user.name}</span>}
+        <button type="button" onClick={handleLogout}>
+          Logga ut
+        </button>
+      </div>
+
     </nav>
   );
 }

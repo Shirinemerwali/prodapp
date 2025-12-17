@@ -1,56 +1,28 @@
-import { useState } from "react";
-import "../pages/Start.css";
+import { Link } from "react-router-dom";
+import "./start.css";
 
 function Start() {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
-
   return (
-
     <div className="home_container">
-        <div className= "home_leftside">
-            <img src="./home_pic.png" alt="Prodapp illustration" />
-        </div>
-        <div className="home_rightside">
-            {!showLogin && !showSignup && (
-            <>
-                <h1>Välkommen till <span className="highlight">Prodapp</span>, din produktivitetsassistent!</h1>
-                <p>Håll koll på dina uppgifter, vanor och evenemang på ett och samma ställe.</p>
-                <div className="home-btns">
-                    <button className="btn btn-primary" onClick={() => setShowLogin(true)}>Logga in</button>
-                    <button className="btn btn-outline" onClick={() => setShowSignup(true)}>Registrera dig</button>
-                </div>
-            </>
-            )}
-            {showLogin && (
-                <form>
-                    <h2>Logga in</h2>
-                    <input placeholder="Användarnamn" />
-                    <input placeholder="Lösenord" type="password" />
-                    <button className="btn btn-primary" type="submit">Logga in</button>
-                    <button className="btn btn-outline" type="button" onClick={() => setShowLogin(false)}>
-                        Tillbaka
-                    </button>
-                    </form>
-            )}
+      <div className="home_leftside">
+        <img src="./home_pic.png" alt="Prodapp illustration" />
+      </div>
 
-            {showSignup && (
-                <form>
-                    <h2>Registrera dig</h2>
-                    <input placeholder="Användarnamn" />
-                    <input placeholder="Lösenord" type="password" />
-                    <input placeholder="Bekräfta lösenord" type="password" />
-                    <button className="btn btn-primary" type="submit">Registrera</button>
-                    <button className="btn btn-outline" type="button" onClick={() => setShowSignup(false)}>
-                        Tillbaka
-                    </button>
-                </form>
-            )}
+      <div className="home_rightside">
+        <h1>Välkommen!</h1>
+        <p>Logga in för att komma till din dashboard.</p>
+
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <Link className="btn btn-primary" to="/login">
+            Logga in
+          </Link>
+          <Link className="btn btn-outline" to="/signup">
+            Skapa konto
+          </Link>
         </div>
+      </div>
     </div>
-
-    );
-
+  );
 }
 
 export default Start;

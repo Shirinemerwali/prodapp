@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "type": "routine",
+    "title": "Morning walk",
+    "description": "Walk around the block",
+    "date": "2025-12-10",
+    "done": false,
+    "userId": "alice"
+  }
+]

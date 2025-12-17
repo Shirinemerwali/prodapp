@@ -1,74 +1,48 @@
-const USERS_URL = "/data/users.db";
-const USERS_KEY = "users";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5174";
 const CURRENT_USER_KEY = "currentUser";
 
-async function fetchJson(url, defaultValue) {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to fetch " + url);
-        return await response.json();
-    } catch (error) {
-        console.error(error);
-        return defaultValue;
-    }
+export async function login(identifier, password) {
+  const res = await fetch(`/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifier, password }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Login failed");
+  }
+
+  const user = await res.json();
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  return user;
 }
 
-function readJson(key, defaultValue) {
-    try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return defaultValue;
+export async function signup({ name, email, password }) {
+  const res = await fetch(`/api/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password }),
+  });
 
-        const parsed = JSON.parse(raw);
-        return parsed ?? defaultValue;
-    } catch (error) {
-        console.error(`Error reading "${key}" from localStorage:`, error);
-        return defaultValue;
-    }
-}
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Signup failed");
+  }
 
-function writeJson(key, value) {
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-        console.error(`Error writing "${key}" to localStorage:`, error);
-    }
-}
-
-async function ensureUsersInitialized() {
-    const existing = localStorage.getItem(USERS_KEY);
-    if (existing) {
-        return readJson(USERS_KEY, []);
-    }
-
-    const usersFromFile = await fetchJson(USERS_URL, []);
-    writeJson(USERS_KEY, usersFromFile);
-    return usersFromFile;
-}
-
-export async function getUsers() {
-    return ensureUsersInitialized();
-}
-
-export function saveUsers(users) {
-    writeJson(USERS_KEY, users);
+  const user = await res.json();
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  return user;
 }
 
 export function getCurrentUser() {
-    return readJson(CURRENT_USER_KEY, null);
-}
-
-export function setCurrentUser(user) {
-    if (!user) {
-        localStorage.removeItem(CURRENT_USER_KEY);
-    } else {
-        writeJson(CURRENT_USER_KEY, user);
-    }
+  try {
+    return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+  } catch {
+    return null;
+  }
 }
 
 export function logout() {
-    localStorage.removeItem(CURRENT_USER_KEY);
+  localStorage.removeItem(CURRENT_USER_KEY);
 }
-
-
-
-
