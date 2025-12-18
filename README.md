@@ -6,5 +6,5 @@
 3. run "npm i express-session" as well.
 
 ## Running the app:
-1. open new terminal and run vnode "server/index.js"
-2. open a second terminal and run vnode "npm run dev"
+1. open new terminal and run "server/index.js"
+2. open a second terminal and run "npm run dev"
