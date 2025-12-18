@@ -39,7 +39,7 @@ function Layout({ isLoggedIn, currentUser, onLogout, onLogin }) {
           path="/dashboard"
           element={
             <RequireAuth isLoggedIn={isLoggedIn}>
-              <Dashboard />
+              <Dashboard user={currentUser}/>
             </RequireAuth>
           }
         />

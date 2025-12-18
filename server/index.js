@@ -33,6 +33,7 @@ app.use(
 
 const USERS_DB_PATH = path.join(process.cwd(), "data", "users.db");
 const HABITS_DB_PATH = path.join(process.cwd(), "data", "habits.db");
+const TODOS_DB_PATH = path.join(process.cwd(), "data", "todos.db");
 
 async function readJsonArray(filePath) {
   try {
@@ -174,6 +175,76 @@ app.delete("/api/habits/:id", requireAuth, async (req, res) => {
   if (next.length === before) return res.status(404).json({ error: "Habit not found" });
 
   await writeJsonArray(HABITS_DB_PATH, next);
+  res.json({ ok: true });
+});
+
+/* -----------------------------
+   TODOS
+----------------------------- */
+
+app.get("/api/todos", requireAuth, async (req, res) => {
+  const todos = await readJsonArray(TODOS_DB_PATH);
+  const userTodos = todos.filter((t) => t.userId === req.session.userId);
+  res.json(userTodos);
+});
+
+app.post("/api/todos", requireAuth, async (req, res) => {
+  const { title, description, done, estimate, category, deadline } = req.body || {};
+  if (!title || !category || !deadline) {
+    return res.status(400).json({
+      error: "Title, category and deadline are required",
+    });
+  }
+
+  const todos = await readJsonArray(TODOS_DB_PATH);
+
+  const newTodo = {
+    id: Date.now(),
+    userId: req.session.userId,
+    title: String(title).trim(),
+    description: description || "No description",
+    done: done || false,
+    estimate: estimate || 0,
+    category: category || "General",
+    deadline: deadline || null,
+    createdAt: Date.now(),
+  };
+
+  todos.push(newTodo);
+  await writeJsonArray(TODOS_DB_PATH, todos);
+
+  res.status(201).json(newTodo);
+});
+
+app.patch("/api/todos/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  const updates = req.body || {};
+
+  const todos = await readJsonArray(TODOS_DB_PATH);
+  const idx = todos.findIndex((t) => t.id === id && t.userId === req.session.userId);
+  if (idx === -1) return res.status(404).json({ error: "Todo not found" });
+
+  todos[idx] = {
+    ...todos[idx],
+    ...updates,
+    id: todos[idx].id,
+    userId: todos[idx].userId,
+  };
+
+  await writeJsonArray(TODOS_DB_PATH, todos);
+  res.json(todos[idx]);
+});
+
+app.delete("/api/todos/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+
+  const todos = await readJsonArray(TODOS_DB_PATH);
+  const before = todos.length;
+  const next = todos.filter((t) => !(t.id === id && t.userId === req.session.userId));
+
+  if (next.length === before) return res.status(404).json({ error: "Todo not found" });
+
+  await writeJsonArray(TODOS_DB_PATH, next);
   res.json({ ok: true });
 });
 

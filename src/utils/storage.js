@@ -1,96 +1,142 @@
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5174";
-const CURRENT_USER_KEY = "currentUser";
+// src/utils/storage.js
+// Centralized API helpers + CRUD functions for Habits & Todos (and simple auth).
+// Uses Vite proxy if configured; otherwise set VITE_API_BASE (e.g. http://localhost:3000).
 
-export async function login(identifier, password) {
-  const res = await fetch(`/api/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+const API_BASE = import.meta.env.VITE_API_BASE || "";
+
+function apiUrl(path) {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return API_BASE ? `${API_BASE}${p}` : p;
+}
+
+async function apiRequest(path, options = {}) {
+  const res = await fetch(apiUrl(path), {
     credentials: "include",
-    body: JSON.stringify({ identifier, password }),
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+    },
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || "Login failed");
+    const contentType = res.headers.get("content-type") || "";
+    let details = "";
+    if (contentType.includes("application/json")) {
+      const err = await res.json().catch(() => ({}));
+      details = err?.error || err?.message || "";
+    } else {
+      details = await res.text().catch(() => "");
+    }
+    const msg = details || `Request failed: ${res.status}`;
+    throw new Error(msg);
   }
 
-  const user = await res.json();
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-  return user;
+  if (res.status === 204) return null;
+
+  const contentType = res.headers.get("content-type") || "";
+  if (contentType.includes("application/json")) return await res.json();
+  return await res.text();
+}
+
+/* -----------------------------
+   Auth (if your backend supports these routes)
+----------------------------- */
+export async function login(identifier, password) {
+  return await apiRequest("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ identifier, password }),
+  });
 }
 
 export async function signup({ name, email, password }) {
-  const res = await fetch(`/api/signup`, {
+  return await apiRequest("/api/signup", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ name, email, password }),
   });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || "Signup failed");
-  }
-
-  const user = await res.json();
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-  return user;
 }
 
 export async function getCurrentUser() {
-  const res = await fetch(`api/me`, {
-    credentials: "include",
-  });
-
-  if (!res.ok) return null;
-  return await res.json();
+  try {
+    return await apiRequest("/api/me");
+  } catch {
+    return null;
+  }
 }
 
 export async function logout() {
-  await fetch(`api//logout`, {
-    method: "POST",
-    credentials: "include",
-  });
+  try {
+    await apiRequest("/api/logout", { method: "POST" });
+  } catch {
+    // ignore
+  }
 }
 
+/* -----------------------------
+   Habits CRUD
+----------------------------- */
 export async function getHabits() {
-  const res = await fetch(`api/habits`, {
-    credentials: "include",
-  });
-
-  if (!res.ok) throw new Error("Failed to load habits");
-  return await res.json();
+  return await apiRequest("/api/habits");
 }
 
 export async function createHabit({ title, priority }) {
-  const res = await fetch(`api/habits`, {
+  return await apiRequest("/api/habits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify({ title, priority }),
   });
-
-  if (!res.ok) throw new Error("Failed to create habit");
-  return await res.json();
 }
 
 export async function updateHabit(id, updates) {
-  const res = await fetch(`api/habits/${id}`, {
+  return await apiRequest(`/api/habits/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    credentials: "include",
     body: JSON.stringify(updates),
   });
-
-  if (!res.ok) throw new Error("Failed to update habit");
-  return await res.json();
 }
 
 export async function deleteHabit(id) {
-  const res = await fetch(`api/habits/${id}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+  await apiRequest(`/api/habits/${id}`, { method: "DELETE" });
+  return true;
+}
 
-  if (!res.ok) throw new Error("Failed to delete habit");
+/* -----------------------------
+   Todos CRUD
+----------------------------- */
+export const TODO_CATEGORIES = ["Hälsa", "Hushåll", "Jobb", "Nöje", "Studier", "Övrigt"];
+
+export async function getTodos() {
+  return await apiRequest("/api/todos");
+}
+
+export async function createTodo({ title, description, done, estimate, category, deadline }) {
+  return await apiRequest("/api/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      title,
+      description,
+      done: Boolean(done),
+      estimate:
+        estimate === "" || estimate === null || estimate === undefined
+          ? 0
+          : Number(estimate),
+      category,
+      deadline,
+    }),
+  });
+}
+
+export async function updateTodo(id, updates) {
+  return await apiRequest(`/api/todos/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+}
+
+export async function deleteTodo(id) {
+  await apiRequest(`/api/todos/${id}`, { method: "DELETE" });
+  return true;
 }

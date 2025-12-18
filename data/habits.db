@@ -1,23 +1,23 @@
 [
   {
-    "id": 1766011621121,
-    "userId": 1766007589372,
-    "title": "Dricka vatten",
-    "priority": "Mellan",
-    "reps": 0
-  },
-  {
     "id": 1766011814374,
     "userId": 1766007589372,
     "title": "Träna",
     "priority": "Hög",
-    "reps": 0
+    "reps": 3
   },
   {
     "id": 1766011854827,
     "userId": 1766007589372,
     "title": "Sminka",
     "priority": "Mellan",
-    "reps": 0
+    "reps": 5
+  },
+  {
+    "id": 1766082886905,
+    "userId": 1766007589372,
+    "title": "Dricka vatten",
+    "priority": "Mellan",
+    "reps": 3
   }
 ]
