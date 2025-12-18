@@ -52,36 +52,32 @@ export default function Dashboard({ user }) {
     }
   }
 
-    useEffect(() => {
-    if (!user) {
+useEffect(() => {
+  const controller = new AbortController();
+
+  (async () => {
+    if (!user?.id) {
       setTodos([]);
       setHabits([]);
       return;
     }
 
-    (async () => {
-      try {
-        const [t, h] = await Promise.all([
-          getTodos(user.id),   // or getTodos() if your backend doesn’t filter by user
-          getHabits(user.id),  // or getHabits()
-        ]);
-        setTodos(t || []);
-        setHabits(h || []);
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, [user?.id]);
+    try {
+      const [t, h] = await Promise.all([
+        getTodos(user.id, controller.signal),
+        getHabits(user.id, controller.signal),
+      ]);
 
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      setTodos([]);
-      setHabits([]);
-      return;
+      setTodos(t || []);
+      setHabits(h || []);
+    } catch (err) {
+      if (err?.name === "AbortError") return; // ✅ ignore abort
+      console.error(err);
     }
+  })();
 
-    loadData();
-  }, []);
+  return () => controller.abort(); // ✅ cancels in-flight fetches on logout
+}, [user?.id]);
 
   return (
     <main className="dashboard">

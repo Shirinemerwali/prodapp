@@ -2,11 +2,11 @@
   {
     "id": 1766083093235,
     "userId": 1766007589372,
-    "title": "test",
-    "description": "test",
+    "title": "Hämta paket",
+    "description": "Hämta paket från PostNord",
     "done": false,
     "estimate": 3,
-    "category": "Jobb",
+    "category": "Hushåll",
     "deadline": "2025-12-21",
     "createdAt": 1766083093235
   }

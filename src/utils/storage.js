@@ -29,6 +29,7 @@ async function apiRequest(path, options = {}) {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
     ...options,
+    signal: options.signal, // ✅ important
     headers: { ...(options.headers || {}) },
   });
 
@@ -88,8 +89,9 @@ export async function logout() {
 /* -----------------------------
    Habits CRUD
 ----------------------------- */
-export async function getHabits() {
-  return await apiRequest("/api/habits");
+export async function getHabits(userId, signal) {
+  const qs = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+  return await apiRequest(`/api/habits${qs}`, { signal });
 }
 
 export async function createHabit({ title, priority }) {
@@ -118,8 +120,9 @@ export async function deleteHabit(id) {
 ----------------------------- */
 export const TODO_CATEGORIES = ["Hälsa", "Hushåll", "Jobb", "Nöje", "Studier", "Övrigt"];
 
-export async function getTodos() {
-  return await apiRequest("/api/todos");
+export async function getTodos(userId, signal) {
+  const qs = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+  return await apiRequest(`/api/todos${qs}`, { signal });
 }
 
 export async function createTodo({ title, description, done, estimate, category, deadline }) {
