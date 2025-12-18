@@ -1,23 +1,18 @@
 import { useNavigate } from "react-router-dom";
+import { getHabits, getTodos } from "../utils/storage";
+import { useEffect, useState } from "react";
 import "./dashboard.css";
 
-export default function Dashboard() {
+export default function Dashboard({ user }) {
   const navigate = useNavigate();
 
-  // Dummy-data tills backend är klart
-  const todos = [
-    { id: 1, title: "Köp mjölk", done: false },
-    { id: 2, title: "Skicka mail till läraren", done: false },
-    { id: 3, title: "Städa rummet", done: false },
-    { id: 4, title: "Plugga React", done: true },
-  ];
+  const [todos, setTodos] = useState([]);
+  const [habits, setHabits] = useState([]);
 
-  const habits = [
-    { id: 1, name: "Dricka vatten", repetitions: 12 },
-    { id: 2, name: "Träna", repetitions: 8 },
-    { id: 3, name: "Meditera", repetitions: 5 },
-    { id: 4, name: "Läsa bok", repetitions: 3 },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Dummy-data tills backend är klart
 
   const events = [
     { id: 1, title: "Möte med gruppen", date: "2025-12-12" },
@@ -26,10 +21,35 @@ export default function Dashboard() {
     { id: 4, title: "Nyårsfest", date: "2025-12-31" },
   ];
 
+  async function loadData() {
+    setError("");
+    setLoading(true);
+    try {
+      const data = await getTodos();
+      setTodos(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error(e);
+      setError("Kunde inte ladda ärenden.");
+    }
+    try {
+      const data = await getHabits();
+      setHabits(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error(e);
+      setError("Kunde inte ladda vanor.");
+    }finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
   return (
     <main className="dashboard">
       <header>
-        <h1>Välkommen tillbaka, user.name</h1>
+        <h1>Välkommen tillbaka, {user.name}</h1>
       </header>
 
       <div className="dashboard-sections">
@@ -39,7 +59,7 @@ export default function Dashboard() {
           <h2>Senaste ej utförda ärenden</h2>
           <ul>
             {todos.map(todo => (
-              <li key={todo.id}>{todo.title}</li>
+              <li key={todo.id}>{todo.title} - {!todo.done ? "ej utförd" : "slutförd"}</li>
             ))}
           </ul>
           <button onClick={() => navigate("/todos")}>Visa alla ärenden</button>
@@ -51,7 +71,7 @@ export default function Dashboard() {
           <ul>
             {habits.map(habit => (
               <li key={habit.id}>
-                {habit.name} – {habit.repetitions} repetitioner
+                {habit.title} – {habit.reps} repetitioner
               </li>
             ))}
           </ul>
