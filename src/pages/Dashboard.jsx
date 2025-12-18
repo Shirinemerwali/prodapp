@@ -21,63 +21,32 @@ export default function Dashboard({ user }) {
     { id: 4, title: "Nyårsfest", date: "2025-12-31" },
   ];
 
-  async function loadData() {
-    if (!isLoggedIn()) return;
-    setError("");
-    setLoading(true);
-    let t = [];
-    let h = [];
+  useEffect(() => {
+    const controller = new AbortController();
 
-    // if logged out, apiRequest returns null
-    if (!t || !h) {
-      setTodos([]);
-      setHabits([]);
-      return;
-    }
-    try {
-      t = await getTodos();
-      setTodos(Array.isArray(t) ? t : []);
-    } catch (e) {
-      console.error(e);
-      setError("Kunde inte ladda ärenden.");
-    }
-    try {
-      h = await getHabits();
-      setHabits(Array.isArray(h) ? h : []);
-    } catch (e) {
-      console.error(e);
-      setError("Kunde inte ladda vanor.");
-    } finally {
-      setLoading(false);
-    }
-  }
+    (async () => {
+      if (!user?.id) {
+        setTodos([]);
+        setHabits([]);
+        return;
+      }
 
-useEffect(() => {
-  const controller = new AbortController();
+      try {
+        const [t, h] = await Promise.all([
+          getTodos(user.id, controller.signal),
+          getHabits(user.id, controller.signal),
+        ]);
 
-  (async () => {
-    if (!user?.id) {
-      setTodos([]);
-      setHabits([]);
-      return;
-    }
+        setTodos(t || []);
+        setHabits(h || []);
+      } catch (err) {
+        if (err?.name === "AbortError") return; // ✅ ignore abort
+        console.error(err);
+      }
+    })();
 
-    try {
-      const [t, h] = await Promise.all([
-        getTodos(user.id, controller.signal),
-        getHabits(user.id, controller.signal),
-      ]);
-
-      setTodos(t || []);
-      setHabits(h || []);
-    } catch (err) {
-      if (err?.name === "AbortError") return; // ✅ ignore abort
-      console.error(err);
-    }
-  })();
-
-  return () => controller.abort(); // ✅ cancels in-flight fetches on logout
-}, [user?.id]);
+    return () => controller.abort(); // ✅ cancels in-flight fetches on logout
+  }, [user?.id]);
 
   return (
     <main className="dashboard">
