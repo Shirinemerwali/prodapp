@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { getHabits, getTodos } from "../utils/storage";
+import { getHabits, getTodos, isLoggedIn } from "../utils/storage";
 import { useEffect, useState } from "react";
 import "./dashboard.css";
 
@@ -22,27 +22,64 @@ export default function Dashboard({ user }) {
   ];
 
   async function loadData() {
+    if (!isLoggedIn()) return;
     setError("");
     setLoading(true);
+    let t = [];
+    let h = [];
+
+    // if logged out, apiRequest returns null
+    if (!t || !h) {
+      setTodos([]);
+      setHabits([]);
+      return;
+    }
     try {
-      const data = await getTodos();
-      setTodos(Array.isArray(data) ? data : []);
+      t = await getTodos();
+      setTodos(Array.isArray(t) ? t : []);
     } catch (e) {
       console.error(e);
       setError("Kunde inte ladda ärenden.");
     }
     try {
-      const data = await getHabits();
-      setHabits(Array.isArray(data) ? data : []);
+      h = await getHabits();
+      setHabits(Array.isArray(h) ? h : []);
     } catch (e) {
       console.error(e);
       setError("Kunde inte ladda vanor.");
-    }finally {
+    } finally {
       setLoading(false);
     }
   }
 
+    useEffect(() => {
+    if (!user) {
+      setTodos([]);
+      setHabits([]);
+      return;
+    }
+
+    (async () => {
+      try {
+        const [t, h] = await Promise.all([
+          getTodos(user.id),   // or getTodos() if your backend doesn’t filter by user
+          getHabits(user.id),  // or getHabits()
+        ]);
+        setTodos(t || []);
+        setHabits(h || []);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+  }, [user?.id]);
+
   useEffect(() => {
+    if (!isLoggedIn()) {
+      setTodos([]);
+      setHabits([]);
+      return;
+    }
+
     loadData();
   }, []);
 
