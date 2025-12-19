@@ -3,6 +3,11 @@ import { useState } from "react";
 function Events() {
   const [showForm, setShowForm] = useState(false);
 
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+
   return (
     <div className="events-wrapper">
       <div className="events-container">
@@ -27,19 +32,31 @@ function Events() {
           <div className="event-form">
             <h2>Ny händelse</h2>
 
-            <input type="text" placeholder="Titel" />
+            <input
+              type="text"
+              placeholder="Titel"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
 
-            <textarea placeholder="Beskrivning (valfritt)" />
+            <textarea
+              placeholder="Beskrivning (valfritt)"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
 
             <label>Start</label>
-            <input type="datetime-local" />
+            <input type="datetime-local" value={start} onChange={(e) => setStart(e.target.value)} />
 
             <label>Slut</label>
-            <input type="datetime-local" />
+            <input type="datetime-local" value={end} onChange={(e) => setEnd(e.target.value)} />
 
-            <button className="submit-btn">Spara händelse</button>
+            <button className="submit-btn">
+              Spara händelse
+            </button>
           </div>
         )}
+
 
         <div className="event-list">
           <p>Inga händelser att visa ännu…</p>
