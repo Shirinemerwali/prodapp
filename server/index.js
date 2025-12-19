@@ -249,5 +249,15 @@ app.delete("/api/todos/:id", requireAuth, async (req, res) => {
   res.json({ ok: true });
 });
 
+/* -----------------------------
+   Events
+----------------------------- */
+
+app.get("/api/events", requireAuth, async (req, res) => {
+  const events = await readJsonArray(EVENTS_DB_PATH);
+  const userEvents = events.filter((e) => e.userId === req.session.userId);
+  res.json(userEvents);
+});
+
 const PORT = process.env.PORT || 5174;
 app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
