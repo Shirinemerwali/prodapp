@@ -34,6 +34,7 @@ app.use(
 const USERS_DB_PATH = path.join(process.cwd(), "data", "users.db");
 const HABITS_DB_PATH = path.join(process.cwd(), "data", "habits.db");
 const TODOS_DB_PATH = path.join(process.cwd(), "data", "todos.db");
+const EVENTS_DB_PATH = path.join(process.cwd(), "data", "events.db");
 
 async function readJsonArray(filePath) {
   try {
