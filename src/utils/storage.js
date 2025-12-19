@@ -139,6 +139,7 @@ export async function createTodo({ title, description, done, estimate, category,
           : Number(estimate),
       category,
       deadline,
+      createdAt : Date.now()
     }),
   });
 }

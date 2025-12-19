@@ -12,6 +12,8 @@ export default function Dashboard({ user }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  let [quote, setQuote] = useState([]);
+
   // Dummy-data tills backend är klart
 
   const events = [
@@ -20,6 +22,20 @@ export default function Dashboard({ user }) {
     { id: 3, title: "Julmiddag", date: "2025-12-20" },
     { id: 4, title: "Nyårsfest", date: "2025-12-31" },
   ];
+
+  async function fetchQuote() {
+    try {
+      const res = await fetch("https://dummyjson.com/quotes/random");
+      const data = await res.json();
+      setQuote(data);
+    } catch (err) {
+      console.error("Failed to fetch quote:", err);
+    }
+  }
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -32,10 +48,17 @@ export default function Dashboard({ user }) {
       }
 
       try {
-        const [t, h] = await Promise.all([
+        let [t, h] = await Promise.all([
           getTodos(user.id, controller.signal),
           getHabits(user.id, controller.signal),
         ]);
+
+        t = t.filter((t) => !t.done);
+        t.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+        t.length = 3;
+
+        h = h.sort((a, b) => (b.reps ?? 0) - (a.reps ?? 0));
+        h.length = 3;
 
         setTodos(t || []);
         setHabits(h || []);
@@ -50,8 +73,9 @@ export default function Dashboard({ user }) {
 
   return (
     <main className="dashboard">
-      <header>
+      <header className="dashboard-header">
         <h1>Välkommen tillbaka, {user.name}</h1>
+        <h3>"{quote.quote}" - {quote.author}</h3>
       </header>
 
       <div className="dashboard-sections">
