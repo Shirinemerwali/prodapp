@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./events.css";
 
 function Events() {
   const [showForm, setShowForm] = useState(false);
   const [events, setEvents] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [filter, setFilter] = useState("");
+  // create form
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-
+  // edit
+  const [editingId, setEditingId] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [editStart, setEditStart] = useState("");
+  const [editEnd, setEditEnd] = useState("");
+  const [saving, setSaving] = useState(false);
   // ---------------------------------------------------
   // Load events
   // ---------------------------------------------------
@@ -31,7 +40,6 @@ function Events() {
   useEffect(() => {
     loadEvents();
   }, []);
-
   // ---------------------------------------------------
   // Create event
   // ---------------------------------------------------
@@ -70,7 +78,6 @@ function Events() {
       setError("Kunde inte spara händelsen.");
     }
   }
-
   // ---------------------------------------------------
   // Edit event
   // ---------------------------------------------------
@@ -122,7 +129,6 @@ function Events() {
       setSaving(false);
     }
   }
-
   // ---------------------------------------------------
   // Delete event
   // ---------------------------------------------------
@@ -153,63 +159,140 @@ function Events() {
     <div className="events-wrapper">
       <div className="events-container">
         <h1 className="events-title">Mina Händelser</h1>
-
+        {/* Filter */}
         <div className="filter-sort-bar">
-          <select>
+          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="">Alla</option>
             <option value="upcoming">Kommande</option>
             <option value="past">Tidigare</option>
           </select>
         </div>
-
+        {/* Toggle form */}
         <button
           className="toggle-form-btn"
           onClick={() => setShowForm(!showForm)}
         >
           {showForm ? "Stäng formulär" : "Lägg till ny händelse"}
         </button>
-
+        {/* Create form */}
         {showForm && (
           <div className="event-form">
             <h2>Ny händelse</h2>
-
             <input
               type="text"
               placeholder="Titel"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-
             <textarea
               placeholder="Beskrivning (valfritt)"
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
             />
-
             <label>Start</label>
             <input
               type="datetime-local"
               value={start}
               onChange={(e) => setStart(e.target.value)}
             />
-
             <label>Slut</label>
             <input
               type="datetime-local"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
             />
-
-            <button className="submit-btn">Spara händelse</button>
+            <button className="submit-btn" onClick={addEvent}>
+              Spara händelse
+            </button>
           </div>
         )}
-
+        {error && <p className="error">{error}</p>}
+        {loading && <p>Laddar…</p>}
+        {/* Event list */}
         <div className="event-list">
-          <p>Inga händelser att visa ännu…</p>
+          {!loading &&
+            filtered.map((ev) => {
+              const isPast = new Date(ev.end) < new Date();
+              return (
+                <div
+                  className="event-card"
+                  key={ev.id}
+                  style={{ opacity: isPast ? 0.55 : 1 }}
+                >
+                  {editingId === ev.id ? (
+                    <>
+                      <div className="event-form">
+                        <input
+                          type="text"
+                          value={editTitle}
+                          onChange={(e) => setEditTitle(e.target.value)}
+                        />
+                        <textarea
+                          value={editDesc}
+                          onChange={(e) => setEditDesc(e.target.value)}
+                        />
+                        <label>Start</label>
+                        <input
+                          type="datetime-local"
+                          value={editStart}
+                          onChange={(e) => setEditStart(e.target.value)}
+                        />
+                        <label>Slut</label>
+                        <input
+                          type="datetime-local"
+                          value={editEnd}
+                          onChange={(e) => setEditEnd(e.target.value)}
+                        />
+                      </div>
+                      <div className="event-buttons">
+                        <button
+                          className="submit-btn"
+                          onClick={() => saveEdit(ev.id)}
+                          disabled={saving}
+                        >
+                          {saving ? "Sparar…" : "Spara"}
+                        </button>
+                        <button className="reset-btn" onClick={cancelEdit}>
+                          Avbryt
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="event-info">
+                        <h3>{ev.title}</h3>
+                        <p>{ev.description || "Ingen beskrivning"}</p>
+                        <p>
+                          <strong>Start:</strong>{" "}
+                          {new Date(ev.start).toLocaleString()}
+                        </p>
+                        <p>
+                          <strong>Slut:</strong>{" "}
+                          {new Date(ev.end).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="event-buttons">
+                        <button
+                          className="reset-btn"
+                          onClick={() => startEdit(ev)}
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          className="delete-btn"
+                          onClick={() => removeEvent(ev.id)}
+                        >
+                          🗑
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
   );
 }
-
 export default Events;

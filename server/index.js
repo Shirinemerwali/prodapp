@@ -218,6 +218,45 @@ app.post("/api/todos", requireAuth, async (req, res) => {
 });
 
 
+/* -----------------------------
+   EVENTS
+----------------------------- */
+
+app.get("/api/events", requireAuth, async (req, res) => {
+  const events = await readJsonArray(EVENTS_DB_PATH);
+  const userEvents = events.filter((e) => e.userId === req.session.userId);
+  res.json(userEvents);
+});
+
+app.post("/api/events", requireAuth, async (req, res) => {
+  const { title, description, start, end } = req.body || {};
+
+  if (!title || !start || !end) {
+    return res.status(400).json({ error: "Title, start and end are required" });
+  }
+
+  if (new Date(end) <= new Date(start)) {
+    return res.status(400).json({ error: "End must be after start" });
+  }
+
+  const events = await readJsonArray(EVENTS_DB_PATH);
+
+  const newEvent = {
+    id: Date.now(),
+    userId: req.session.userId,
+    title: String(title).trim(),
+    description: description || "",
+    start,
+    end,
+    createdAt: Date.now(),
+  };
+
+  events.push(newEvent);
+  await writeJsonArray(EVENTS_DB_PATH, events);
+
+  res.status(201).json(newEvent);
+});
+
 app.patch("/api/events/:id", requireAuth, async (req, res) => {
   const id = Number(req.params.id);
   const { title, description, start, end } = req.body || {};
