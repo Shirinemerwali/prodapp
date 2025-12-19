@@ -14,17 +14,11 @@ export default function Login({ onLogin }) {
     setError("");
 
     try {
-      // login is sync in our storage.js, but awaiting is fine too
       const user = await Promise.resolve(login(identifier, password));
-
-      // ✅ update App state
       onLogin?.(user);
-
-      // ✅ go to dashboard immediately
       navigate("/dashboard", { replace: true });
-    } catch (err) {
+    } catch {
       setError("Inloggningen misslyckades.");
-      console.error(err);
     }
   }
 
@@ -33,14 +27,18 @@ export default function Login({ onLogin }) {
       <div className="auth_card">
         <h1>Logga in</h1>
 
-        <form onSubmit={handleSubmit}>
+        {error && <div className="auth_error">{error}</div>}
+
+        <form className="auth_form" onSubmit={handleSubmit}>
           <input
+            type="email"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             placeholder="Email"
             autoComplete="email"
             required
           />
+
           <input
             type="password"
             value={password}
@@ -50,14 +48,15 @@ export default function Login({ onLogin }) {
             required
           />
 
-          {error && <p className="auth_error">{error}</p>}
-
-          <button type="submit" className="auth_btn">Logga in</button>
+          <button type="submit" className="auth_btn">
+            Logga in
+          </button>
         </form>
 
         <p className="auth_hint">
           Har du inget konto? <Link to="/signup">Skapa konto</Link>
         </p>
+
         <p className="auth_hint">
           <Link to="/">Till startsidan</Link>
         </p>
