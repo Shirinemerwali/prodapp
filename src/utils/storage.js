@@ -4,6 +4,22 @@
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 
+const USER_KEY = "user";
+
+export function setStoredUser(user) {
+  if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
+  else localStorage.removeItem(USER_KEY);
+}
+
+export function getStoredUser() {
+  const raw = localStorage.getItem(USER_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+
+export function isLoggedIn() {
+  return Boolean(getStoredUser());
+}
+
 function apiUrl(path) {
   const p = path.startsWith("/") ? path : `/${path}`;
   return API_BASE ? `${API_BASE}${p}` : p;
@@ -13,29 +29,29 @@ async function apiRequest(path, options = {}) {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
     ...options,
-    headers: {
-      ...(options.headers || {}),
-    },
+    signal: options.signal, // ✅ important
+    headers: { ...(options.headers || {}) },
   });
 
+  // ✅ handle auth state cleanly
+  if (res.status === 401) return null;
+
   if (!res.ok) {
-    const contentType = res.headers.get("content-type") || "";
+    const ct = res.headers.get("content-type") || "";
     let details = "";
-    if (contentType.includes("application/json")) {
+    if (ct.includes("application/json")) {
       const err = await res.json().catch(() => ({}));
       details = err?.error || err?.message || "";
     } else {
       details = await res.text().catch(() => "");
     }
-    const msg = details || `Request failed: ${res.status}`;
-    throw new Error(msg);
+    throw new Error(details || `Request failed: ${res.status}`);
   }
 
   if (res.status === 204) return null;
 
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) return await res.json();
-  return await res.text();
+  const ct = res.headers.get("content-type") || "";
+  return ct.includes("application/json") ? res.json() : res.text();
 }
 
 /* -----------------------------
@@ -58,16 +74,13 @@ export async function signup({ name, email, password }) {
 }
 
 export async function getCurrentUser() {
-  try {
-    return await apiRequest("/api/me");
-  } catch {
-    return null;
-  }
+  return null; // no session-based auth in this project
 }
 
 export async function logout() {
   try {
     await apiRequest("/api/logout", { method: "POST" });
+    setStoredUser(null);
   } catch {
     // ignore
   }
@@ -76,8 +89,9 @@ export async function logout() {
 /* -----------------------------
    Habits CRUD
 ----------------------------- */
-export async function getHabits() {
-  return await apiRequest("/api/habits");
+export async function getHabits(userId, signal) {
+  const qs = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+  return await apiRequest(`/api/habits${qs}`, { signal });
 }
 
 export async function createHabit({ title, priority }) {
@@ -106,8 +120,9 @@ export async function deleteHabit(id) {
 ----------------------------- */
 export const TODO_CATEGORIES = ["Hälsa", "Hushåll", "Jobb", "Nöje", "Studier", "Övrigt"];
 
-export async function getTodos() {
-  return await apiRequest("/api/todos");
+export async function getTodos(userId, signal) {
+  const qs = userId ? `?userId=${encodeURIComponent(userId)}` : "";
+  return await apiRequest(`/api/todos${qs}`, { signal });
 }
 
 export async function createTodo({ title, description, done, estimate, category, deadline }) {

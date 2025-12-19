@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { getHabits, getTodos } from "../utils/storage";
+import { getHabits, getTodos, isLoggedIn } from "../utils/storage";
 import { useEffect, useState } from "react";
 import "./dashboard.css";
 
@@ -21,30 +21,32 @@ export default function Dashboard({ user }) {
     { id: 4, title: "Nyårsfest", date: "2025-12-31" },
   ];
 
-  async function loadData() {
-    setError("");
-    setLoading(true);
-    try {
-      const data = await getTodos();
-      setTodos(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error(e);
-      setError("Kunde inte ladda ärenden.");
-    }
-    try {
-      const data = await getHabits();
-      setHabits(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error(e);
-      setError("Kunde inte ladda vanor.");
-    }finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadData();
-  }, []);
+    const controller = new AbortController();
+
+    (async () => {
+      if (!user?.id) {
+        setTodos([]);
+        setHabits([]);
+        return;
+      }
+
+      try {
+        const [t, h] = await Promise.all([
+          getTodos(user.id, controller.signal),
+          getHabits(user.id, controller.signal),
+        ]);
+
+        setTodos(t || []);
+        setHabits(h || []);
+      } catch (err) {
+        if (err?.name === "AbortError") return; // ✅ ignore abort
+        console.error(err);
+      }
+    })();
+
+    return () => controller.abort(); // ✅ cancels in-flight fetches on logout
+  }, [user?.id]);
 
   return (
     <main className="dashboard">
