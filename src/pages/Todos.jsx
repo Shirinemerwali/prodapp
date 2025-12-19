@@ -89,6 +89,14 @@ function Todos() {
       list.sort((a, b) => Number(Boolean(b.done)) - Number(Boolean(a.done)));
     }
 
+    if (sortOption === "created-asc") {
+      list.sort((a, b) => Number(a.createdAt || 0) - Number(b.createdAt || 0));
+    }
+
+    if (sortOption === "created-desc") {
+      list.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+    }
+
     return list;
   }, [todos, filterStatus, sortOption, selectedCategories]);
 
@@ -241,6 +249,8 @@ function Todos() {
             <option value="estimate-desc">Tidsestimat – fallande</option>
             <option value="status-asc">Status – Ej utförd först</option>
             <option value="status-desc">Status – Slutförd först</option>
+            <option value="created-desc">Skapad – senaste</option>
+            <option value="created-asc">Skapad – tidigaste</option>
           </select>
         </div>
 
