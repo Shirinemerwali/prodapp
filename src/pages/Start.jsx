@@ -9,9 +9,8 @@ function Start() {
       </div>
 
       <div className="home_rightside">
-        <h1>Välkommen!</h1>
-        <p>Logga in för att komma till din dashboard.</p>
-
+        <h1>Välkommen till <span className="highlight">Prodapp</span></h1>
+        <p>Allt du behöver för att hålla koll på vardagen. Logga in eller registrera dig för att fortsätta.</p>
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Link className="btn btn-primary" to="/login">
             Logga in

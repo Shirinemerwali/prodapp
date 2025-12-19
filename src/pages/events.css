@@ -1,0 +1,178 @@
+/* WRAPPER & CONTAINER */
+.events-wrapper {
+  display: flex;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+  font-family: sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.events-container {
+  width: min(90%, 900px);
+  margin: 0 auto;
+}
+
+/* TITLE */
+.events-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* FILTER + SORT */
+.filter-sort-bar {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-sort-bar select {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  font-size: 1rem;
+}
+
+/* TOGGLE FORM BUTTON */
+.toggle-form-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.toggle-form-btn:hover {
+  background: #005fcc;
+}
+
+/* EVENT FORM */
+.event-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 3rem;
+  border: 1px solid #e0e0e0;
+}
+
+.event-form h2 {
+  margin-bottom: 1rem;
+}
+
+.event-form input,
+.event-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.event-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* SUBMIT BUTTON */
+.submit-btn {
+  width: 100%;
+  padding: 0.9rem;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.submit-btn:hover {
+  background: #1e7e34;
+}
+
+/* EVENT LIST */
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* EVENT CARD */
+.event-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 1.2rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+}
+
+.event-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.event-info p {
+  margin: 0.2rem 0;
+  color: #555;
+}
+
+/* BUTTONS */
+.event-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.event-buttons button {
+  padding: 0.5rem 0.7rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.reset-btn {
+  background: #e6e6e6;
+}
+
+.reset-btn:hover {
+  background: #d4d4d4;
+}
+
+.delete-btn {
+  background: #ffdddd;
+}
+
+.delete-btn:hover {
+  background: #ffbfbf;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .filter-sort-bar {
+    flex-direction: column;
+  }
+
+  .event-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .event-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

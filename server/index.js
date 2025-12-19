@@ -34,6 +34,7 @@ app.use(
 const USERS_DB_PATH = path.join(process.cwd(), "data", "users.db");
 const HABITS_DB_PATH = path.join(process.cwd(), "data", "habits.db");
 const TODOS_DB_PATH = path.join(process.cwd(), "data", "todos.db");
+const EVENTS_DB_PATH = path.join(process.cwd(), "data", "events.db");
 
 async function readJsonArray(filePath) {
   try {
@@ -246,6 +247,16 @@ app.delete("/api/todos/:id", requireAuth, async (req, res) => {
 
   await writeJsonArray(TODOS_DB_PATH, next);
   res.json({ ok: true });
+});
+
+/* -----------------------------
+   Events
+----------------------------- */
+
+app.get("/api/events", requireAuth, async (req, res) => {
+  const events = await readJsonArray(EVENTS_DB_PATH);
+  const userEvents = events.filter((e) => e.userId === req.session.userId);
+  res.json(userEvents);
 });
 
 const PORT = process.env.PORT || 5174;
