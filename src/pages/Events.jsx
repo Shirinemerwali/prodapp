@@ -18,7 +18,7 @@ function Events() {
   const [desc, setDesc] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-// edit
+  // edit
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDesc, setEditDesc] = useState("");
@@ -26,17 +26,9 @@ function Events() {
   const [editEnd, setEditEnd] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function cancelEdit() {
-  setEditingId(null);
-  setEditTitle("");
-  setEditDesc("");
-  setEditStart("");
-  setEditEnd("");
-  setSaving(false);
-}
-// ---------------------------------------------------
-// Load events
-// ---------------------------------------------------
+  // ---------------------------------------------------
+  // Load events
+  // ---------------------------------------------------
   async function loadEvents() {
     setLoading(true);
     setError("");
@@ -55,9 +47,9 @@ function Events() {
   useEffect(() => {
     loadEvents();
   }, []);
-// ---------------------------------------------------
-// Create event
-// ---------------------------------------------------
+  // ---------------------------------------------------
+  // Create event
+  // ---------------------------------------------------
   async function addEvent() {
     setError("");
 
@@ -91,9 +83,27 @@ function Events() {
       setError("Kunde inte spara händelsen.");
     }
   }
-// ---------------------------------------------------
-// Edit event
-// ---------------------------------------------------
+  // ---------------------------------------------------
+  // Edit event
+  // ---------------------------------------------------
+
+  function startEdit(ev) {
+    setError("");
+    setEditingId(ev.id);
+    setEditTitle(ev.title || "");
+    setEditDesc(ev.description || "");
+    setEditStart(ev.start || "");
+    setEditEnd(ev.end || "");
+  }
+  function cancelEdit() {
+    setEditingId(null);
+    setEditTitle("");
+    setEditDesc("");
+    setEditStart("");
+    setEditEnd("");
+    setSaving(false);
+  }
+
   async function saveEdit(id) {
     setError("");
 
@@ -108,7 +118,6 @@ function Events() {
     }
 
     setSaving(true);
-    
 
     try {
       const updated = await updateEvent(id, {
@@ -126,9 +135,9 @@ function Events() {
       setSaving(false);
     }
   }
-// ---------------------------------------------------
-// Delete event
-// ---------------------------------------------------
+  // ---------------------------------------------------
+  // Delete event
+  // ---------------------------------------------------
   async function removeEvent(id) {
     try {
       await deleteEvent(id);
