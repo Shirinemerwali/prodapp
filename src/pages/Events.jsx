@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+import {
+  getEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+} from "../utils/storage";
 import "./events.css";
 
 function Events() {
@@ -12,23 +18,31 @@ function Events() {
   const [desc, setDesc] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-  // edit
+// edit
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDesc, setEditDesc] = useState("");
   const [editStart, setEditStart] = useState("");
   const [editEnd, setEditEnd] = useState("");
   const [saving, setSaving] = useState(false);
-  // ---------------------------------------------------
-  // Load events
-  // ---------------------------------------------------
+
+  function cancelEdit() {
+  setEditingId(null);
+  setEditTitle("");
+  setEditDesc("");
+  setEditStart("");
+  setEditEnd("");
+  setSaving(false);
+}
+// ---------------------------------------------------
+// Load events
+// ---------------------------------------------------
   async function loadEvents() {
     setLoading(true);
     setError("");
+
     try {
-      const res = await fetch("/api/events", { credentials: "include" });
-      if (!res.ok) throw new Error("Failed");
-      const data = await res.json();
+      const data = await getEvents();
       setEvents(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
@@ -37,37 +51,36 @@ function Events() {
       setLoading(false);
     }
   }
+
   useEffect(() => {
     loadEvents();
   }, []);
-  // ---------------------------------------------------
-  // Create event
-  // ---------------------------------------------------
+// ---------------------------------------------------
+// Create event
+// ---------------------------------------------------
   async function addEvent() {
     setError("");
+
     if (!title.trim() || !start || !end) {
       setError("Titel, start och slut krävs.");
       return;
     }
+
     if (new Date(end) <= new Date(start)) {
       setError("Sluttid måste vara efter starttid.");
       return;
     }
+
     try {
-      const res = await fetch("/api/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          title: title.trim(),
-          description: desc.trim(),
-          start,
-          end,
-        }),
+      const newEvent = await createEvent({
+        title: title.trim(),
+        description: desc.trim(),
+        start,
+        end,
       });
-      if (!res.ok) throw new Error("Failed");
-      const newEvent = await res.json();
+
       setEvents((prev) => [...prev, newEvent]);
+
       setTitle("");
       setDesc("");
       setStart("");
@@ -78,49 +91,33 @@ function Events() {
       setError("Kunde inte spara händelsen.");
     }
   }
-  // ---------------------------------------------------
-  // Edit event
-  // ---------------------------------------------------
-  function startEdit(ev) {
-    setEditingId(ev.id);
-    setEditTitle(ev.title);
-    setEditDesc(ev.description || "");
-    setEditStart(ev.start);
-    setEditEnd(ev.end);
-  }
-  function cancelEdit() {
-    setEditingId(null);
-    setEditTitle("");
-    setEditDesc("");
-    setEditStart("");
-    setEditEnd("");
-    setSaving(false);
-  }
+// ---------------------------------------------------
+// Edit event
+// ---------------------------------------------------
   async function saveEdit(id) {
     setError("");
+
     if (!editTitle.trim() || !editStart || !editEnd) {
       setError("Titel, start och slut krävs.");
       return;
     }
+
     if (new Date(editEnd) <= new Date(editStart)) {
       setError("Sluttid måste vara efter starttid.");
       return;
     }
+
     setSaving(true);
+    
+
     try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          title: editTitle.trim(),
-          description: editDesc.trim(),
-          start: editStart,
-          end: editEnd,
-        }),
+      const updated = await updateEvent(id, {
+        title: editTitle.trim(),
+        description: editDesc.trim(),
+        start: editStart,
+        end: editEnd,
       });
-      if (!res.ok) throw new Error("Failed");
-      const updated = await res.json();
+
       setEvents((prev) => prev.map((ev) => (ev.id === id ? updated : ev)));
       cancelEdit();
     } catch (err) {
@@ -129,22 +126,19 @@ function Events() {
       setSaving(false);
     }
   }
-  // ---------------------------------------------------
-  // Delete event
-  // ---------------------------------------------------
+// ---------------------------------------------------
+// Delete event
+// ---------------------------------------------------
   async function removeEvent(id) {
     try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed");
+      await deleteEvent(id);
       setEvents((prev) => prev.filter((ev) => ev.id !== id));
     } catch (err) {
       console.error(err);
       setError("Kunde inte ta bort händelsen.");
     }
   }
+
   const now = new Date();
   let filtered = [...events];
   // sort always by start time

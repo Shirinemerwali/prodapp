@@ -156,3 +156,33 @@ export async function deleteTodo(id) {
   await apiRequest(`/api/todos/${id}`, { method: "DELETE" });
   return true;
 }
+
+
+/* -----------------------------
+   Events CRUD
+----------------------------- */
+
+export async function getEvents() {
+  return apiRequest("/api/events");
+}
+
+export async function createEvent({ title, description, start, end, userId }) {
+  return await apiRequest("/api/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title, description, start, end, userId }),
+  });
+}
+
+export async function updateEvent(id, updates) {
+  return await apiRequest(`/api/events/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updates),
+  });
+}
+
+export async function deleteEvent(id) {
+  await apiRequest(`/api/events/${id}`, { method: "DELETE" });
+  return true;
+}
