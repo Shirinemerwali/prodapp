@@ -162,15 +162,15 @@ export async function deleteTodo(id) {
    Events CRUD
 ----------------------------- */
 
-export async function getEvents() {
-  return apiRequest("/api/events");
+export async function getEvents(signal) {
+  return apiRequest("/api/events", { signal });
 }
 
-export async function createEvent({ title, description, start, end, userId }) {
+export async function createEvent({ title, description, start, end }) {
   return await apiRequest("/api/events", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, description, start, end, userId }),
+    body: JSON.stringify({ title, description, start, end }),
   });
 }
 

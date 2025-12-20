@@ -33,6 +33,7 @@ export default function Dashboard({ user }) {
       if (!user?.id) {
         setTodos([]);
         setHabits([]);
+        setEvents([]);
         return;
       }
 
@@ -40,7 +41,7 @@ export default function Dashboard({ user }) {
         let [t, h, e] = await Promise.all([
           getTodos(user.id, controller.signal),
           getHabits(user.id, controller.signal),
-          getEvents(user.id, controller.signal),
+          getEvents( controller.signal),
         ]);
 
         e = e.sort((a, b) => new Date(a.start) - new Date(b.start));
