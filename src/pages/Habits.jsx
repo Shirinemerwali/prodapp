@@ -222,7 +222,7 @@ function Habits() {
 
               {editingId === habit.id ? (
                 <>
-                  <div className="habit-info">
+                  <div className="habit-info habit-form">
                     <input
                       type="text"
                       value={editTitle}

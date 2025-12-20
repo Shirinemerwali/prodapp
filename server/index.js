@@ -217,6 +217,78 @@ app.post("/api/todos", requireAuth, async (req, res) => {
   res.status(201).json(newTodo);
 });
 
+app.patch("/api/todos/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+  const updates = req.body || {};
+
+  const todos = await readJsonArray(TODOS_DB_PATH);
+  const idx = todos.findIndex((t) => t.id === id && t.userId === req.session.userId);
+
+  if (idx === -1) return res.status(404).json({ error: "Todo not found" });
+
+  todos[idx] = {
+    ...todos[idx],
+    ...updates,
+    id: todos[idx].id,
+    userId: todos[idx].userId,
+  };
+
+  await writeJsonArray(TODOS_DB_PATH, todos);
+  res.json(todos[idx]);
+});
+
+app.delete("/api/todos/:id", requireAuth, async (req, res) => {
+  const id = Number(req.params.id);
+
+  const todos = await readJsonArray(TODOS_DB_PATH);
+  const before = todos.length;
+  const next = todos.filter((t) => !(t.id === id && t.userId === req.session.userId));
+
+  if (next.length === before) return res.status(404).json({ error: "Todo not found" });
+
+  await writeJsonArray(TODOS_DB_PATH, next);
+  res.json({ ok: true });
+});
+
+
+/* -----------------------------
+   EVENTS
+----------------------------- */
+
+app.get("/api/events", requireAuth, async (req, res) => {
+  const events = await readJsonArray(EVENTS_DB_PATH);
+  const userEvents = events.filter((e) => e.userId === req.session.userId);
+  res.json(userEvents);
+});
+
+app.post("/api/events", requireAuth, async (req, res) => {
+  const { title, description, start, end } = req.body || {};
+
+  if (!title || !start || !end) {
+    return res.status(400).json({ error: "Title, start and end are required" });
+  }
+
+  if (new Date(end) <= new Date(start)) {
+    return res.status(400).json({ error: "End must be after start" });
+  }
+
+  const events = await readJsonArray(EVENTS_DB_PATH);
+
+  const newEvent = {
+    id: Date.now(),
+    userId: req.session.userId,
+    title: String(title).trim(),
+    description: description || "",
+    start,
+    end,
+    createdAt: Date.now(),
+  };
+
+  events.push(newEvent);
+  await writeJsonArray(EVENTS_DB_PATH, events);
+
+  res.status(201).json(newEvent);
+});
 
 app.patch("/api/events/:id", requireAuth, async (req, res) => {
   const id = Number(req.params.id);
