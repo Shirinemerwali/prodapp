@@ -330,7 +330,7 @@ function Todos() {
             <div className={`todo-card ${todo.done ? "done" : ""}`} key={todo.id}>
               {editingId === todo.id ? (
                 <>
-                  <div className="todo-info">
+                  <div className="todo-info todo-form" >
                     <input
                       type="text"
                       value={editTitle}

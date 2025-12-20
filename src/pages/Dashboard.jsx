@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { getHabits, getTodos, isLoggedIn } from "../utils/storage";
+import { getHabits, getTodos, getEvents } from "../utils/storage";
 import { useEffect, useState } from "react";
 import "./dashboard.css";
 
@@ -8,20 +8,9 @@ export default function Dashboard({ user }) {
 
   const [todos, setTodos] = useState([]);
   const [habits, setHabits] = useState([]);
+  const [events, setEvents] = useState([]);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  let [quote, setQuote] = useState([]);
-
-  // Dummy-data tills backend är klart
-
-  const events = [
-    { id: 1, title: "Möte med gruppen", date: "2025-12-12" },
-    { id: 2, title: "Tenta", date: "2025-12-15" },
-    { id: 3, title: "Julmiddag", date: "2025-12-20" },
-    { id: 4, title: "Nyårsfest", date: "2025-12-31" },
-  ];
+  let [quote, setQuote] = useState(null);
 
   async function fetchQuote() {
     try {
@@ -44,14 +33,21 @@ export default function Dashboard({ user }) {
       if (!user?.id) {
         setTodos([]);
         setHabits([]);
+        setEvents([]);
         return;
       }
 
       try {
-        let [t, h] = await Promise.all([
+        let [t, h, e] = await Promise.all([
           getTodos(user.id, controller.signal),
           getHabits(user.id, controller.signal),
+          getEvents(controller.signal),
         ]);
+
+        const now = new Date();
+        e = e.filter((ev) => new Date(ev.end) > now);
+        e = e.sort((a, b) => new Date(a.start) - new Date(b.start));
+        e = e.slice(0, 3);
 
         t = t.filter((t) => !t.done);
         t.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
@@ -60,6 +56,7 @@ export default function Dashboard({ user }) {
         h = h.sort((a, b) => (b.reps ?? 0) - (a.reps ?? 0));
         h.length = 3;
 
+        setEvents(e || []);
         setTodos(t || []);
         setHabits(h || []);
       } catch (err) {
@@ -75,17 +72,20 @@ export default function Dashboard({ user }) {
     <main className="dashboard">
       <header className="dashboard-header">
         <h1>Välkommen tillbaka, {user.name}</h1>
-        <h3>"{quote.quote}" - {quote.author}</h3>
+        <h3>
+          {quote ? `"${quote.quote}" – ${quote.author}` : "Laddar citat..."}
+        </h3>
       </header>
 
       <div className="dashboard-sections">
-
         {/* ✅ Sektion 1 – Ärenden */}
         <section className="dash-section">
           <h2>Senaste ej utförda ärenden</h2>
           <ul>
-            {todos.map(todo => (
-              <li key={todo.id}>{todo.title} - {!todo.done ? "ej utförd" : "slutförd"}</li>
+            {todos.map((todo) => (
+              <li key={todo.id}>
+                {todo.title} - {!todo.done ? "ej utförd" : "slutförd"}
+              </li>
             ))}
           </ul>
           <button onClick={() => navigate("/todos")}>Visa alla ärenden</button>
@@ -95,7 +95,7 @@ export default function Dashboard({ user }) {
         <section className="dash-section">
           <h2>Rutiner med flest repetitioner</h2>
           <ul>
-            {habits.map(habit => (
+            {habits.map((habit) => (
               <li key={habit.id}>
                 {habit.title} – {habit.reps} repetitioner
               </li>
@@ -108,15 +108,16 @@ export default function Dashboard({ user }) {
         <section className="dash-section">
           <h2>Nästkommande händelser</h2>
           <ul>
-            {events.map(event => (
+            {events.map((event) => (
               <li key={event.id}>
-                {event.title} – {event.date}
+                {event.title} – {new Date(event.start).toLocaleDateString()}
               </li>
             ))}
           </ul>
-          <button onClick={() => navigate("/events")}>Visa alla händelser</button>
+          <button onClick={() => navigate("/events")}>
+            Visa alla händelser
+          </button>
         </section>
-
       </div>
     </main>
   );
