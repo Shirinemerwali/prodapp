@@ -9,8 +9,17 @@ function Start() {
       </div>
 
       <div className="home_rightside">
-        <h1>Välkommen till <span className="highlight">Prodapp</span></h1>
-        <p>Allt du behöver för att hålla koll på vardagen. Logga in eller registrera dig för att fortsätta.</p>
+      <h1>
+  Välkommen till <span className="highlight">Prodapp</span>
+</h1>
+<p className="subtitle">
+  Planera din vardag utan stress.
+  Samla uppgifter, rutiner och events i en och samma app.
+</p>
+<p className="trust">
+  Gratis att använda • Enkelt att komma igång!
+</p>
+
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <Link className="btn btn-primary" to="/login">
             Logga in

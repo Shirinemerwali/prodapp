@@ -6,7 +6,15 @@
   font-family: sans-serif;
   width: 100%;
   box-sizing: border-box;
+
+  background: radial-gradient(
+    circle at center,
+    #5adbe6 0%,
+    #3aa0d8 45%,
+    #0b4fa3 100%
+  );
 }
+
 
 .events-container {
   width: min(90%, 900px);
@@ -19,6 +27,7 @@
   margin-bottom: 2rem;
   font-size: 2rem;
   font-weight: 600;
+  color: white;
 }
 
 /* FILTER + SORT */
@@ -176,3 +185,5 @@
     justify-content: space-between;
   }
 }
+
+

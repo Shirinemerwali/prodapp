@@ -7,6 +7,7 @@
   box-sizing: border-box;
 }
 
+
 .habits-container {
 width: min(90%, 900px);
   margin: 0 auto;
@@ -17,6 +18,7 @@ width: min(90%, 900px);
   margin-bottom: 2rem;
   font-size: 2rem;
   font-weight: 600;
+  color: white;
 }
 
 .filter-sort-bar {
@@ -177,4 +179,14 @@ width: min(90%, 900px);
     width: 100%;
     justify-content: space-between;
   }
+}
+
+
+.habits {
+  background: radial-gradient(
+    circle at center,
+    #5adbe6 0%,
+    #3aa0d8 45%,
+    #0b4fa3 100%
+  );
 }
