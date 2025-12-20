@@ -41,11 +41,13 @@ export default function Dashboard({ user }) {
         let [t, h, e] = await Promise.all([
           getTodos(user.id, controller.signal),
           getHabits(user.id, controller.signal),
-          getEvents( controller.signal),
+          getEvents(controller.signal),
         ]);
 
+        const now = new Date();
+        e = e.filter((ev) => new Date(ev.end) > now);
         e = e.sort((a, b) => new Date(a.start) - new Date(b.start));
-        e.length = 3;
+        e = e.slice(0, 3);
 
         t = t.filter((t) => !t.done);
         t.sort((a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
