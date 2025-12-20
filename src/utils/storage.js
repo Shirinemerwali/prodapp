@@ -25,27 +25,22 @@ function apiUrl(path) {
   return API_BASE ? `${API_BASE}${p}` : p;
 }
 
-async function apiRequest(path, options = {}) {
+async function apiRequest(path, options = {}, allow401 = false) {
   const res = await fetch(apiUrl(path), {
     credentials: "include",
     ...options,
-    signal: options.signal, // ✅ important
     headers: { ...(options.headers || {}) },
   });
 
-  // ✅ handle auth state cleanly
-  if (res.status === 401) return null;
+  if (res.status === 401 && allow401) return null;
 
   if (!res.ok) {
-    const ct = res.headers.get("content-type") || "";
-    let details = "";
-    if (ct.includes("application/json")) {
-      const err = await res.json().catch(() => ({}));
-      details = err?.error || err?.message || "";
-    } else {
-      details = await res.text().catch(() => "");
-    }
-    throw new Error(details || `Request failed: ${res.status}`);
+    let message = `Request failed: ${res.status}`;
+    try {
+      const data = await res.json();
+      message = data?.error || data?.message || message;
+    } catch {}
+    throw new Error(message);
   }
 
   if (res.status === 204) return null;
@@ -74,16 +69,11 @@ export async function signup({ name, email, password }) {
 }
 
 export async function getCurrentUser() {
-  return null; // no session-based auth in this project
+  return apiRequest("/api/me", {}, true); // allow401 => returns null if not logged in
 }
 
 export async function logout() {
-  try {
-    await apiRequest("/api/logout", { method: "POST" });
-    setStoredUser(null);
-  } catch {
-    // ignore
-  }
+  await apiRequest("/api/logout", { method: "POST" });
 }
 
 /* -----------------------------
@@ -139,7 +129,7 @@ export async function createTodo({ title, description, done, estimate, category,
           : Number(estimate),
       category,
       deadline,
-      createdAt : Date.now()
+      createdAt: Date.now(),
     }),
   });
 }

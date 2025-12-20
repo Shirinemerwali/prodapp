@@ -15,7 +15,7 @@ import Events from "./pages/Events";
 function RequireAuth({ isLoggedIn, children }) {
   const location = useLocation();
   if (!isLoggedIn) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    return <Navigate to="/" replace state={{ from: location.pathname }} />;
   }
   return children;
 }
@@ -39,7 +39,7 @@ function Layout({ isLoggedIn, currentUser, onLogout, onLogin }) {
           path="/dashboard"
           element={
             <RequireAuth isLoggedIn={isLoggedIn}>
-              <Dashboard user={currentUser}/>
+              <Dashboard user={currentUser} />
             </RequireAuth>
           }
         />
@@ -93,7 +93,7 @@ function App() {
 
   function handleLogin(user) {
     setCurrentUser(user);
-    setIsLoggedIn(true);
+    setIsLoggedIn(Boolean(user));
   }
 
   async function handleLogout() {
