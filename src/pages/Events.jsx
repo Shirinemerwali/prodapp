@@ -183,7 +183,7 @@ function Events() {
             <h2>Ny händelse</h2>
             <input
               type="text"
-              placeholder="Titel"
+              placeholder="Titel på händelsen (t.ex. 'Möte med teamet')"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
