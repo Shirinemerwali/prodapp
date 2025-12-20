@@ -158,7 +158,7 @@ function Habits() {
   }
 
     return (
-    <div className="habits-wrapper">
+    <div className="habits-wrapper habits">
 
       <div className="habits-container">
 

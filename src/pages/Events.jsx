@@ -1,4 +1,6 @@
 import { useState } from "react";
+import "./events.css";
+
 
 function Events() {
   const [showForm, setShowForm] = useState(false);
@@ -9,7 +11,7 @@ function Events() {
   const [end, setEnd] = useState("");
 
   return (
-    <div className="events-wrapper">
+    <div className="events-wrapper events">
       <div className="events-container">
         <h1 className="events-title">Mina Händelser</h1>
 
