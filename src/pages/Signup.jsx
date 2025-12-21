@@ -86,7 +86,6 @@ export default function Signup({ onLogin }) {
             placeholder="Lösenord"
             autoComplete="new-password"
             minLength={8}
-            pattern="^(?=.*\\p{L})(?=.*\\p{N}).{8,}$"
             title="Password must be at least 8 characters and include both letters and numbers"
             required
           />

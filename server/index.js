@@ -79,11 +79,11 @@ function requireAuth(req, res, next) {
 
 app.get("/api/me", async (req, res) => {
   const userId = req.session?.userId;
-  if (!userId) return res.status(401).json({ error: "Not authenticated" });
+  if (!userId) return res.json(null);
 
   const users = await readJsonArray(USERS_DB_PATH);
   const user = users.find((u) => u.id === userId);
-  if (!user) return res.status(401).json({ error: "Not authenticated" });
+  if (!user) return res.json(null);
 
   res.json(safeUser(user));
 });
