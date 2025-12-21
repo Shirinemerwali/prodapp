@@ -83,7 +83,7 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">📋</div>
             <h2>
-              Uppgifter
+              Ärenden - ej slutförda
             </h2>
           </div>
           <ul>
@@ -101,7 +101,7 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">📅</div>
             <h2>
-              Events
+              Händelser - kommande
             </h2>
           </div>
           <ul>
@@ -121,7 +121,7 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">⭐</div>
             <h2>
-              Rutiner
+              Rutiner - Flest repetitioner
             </h2>
           </div>
           <ul>
