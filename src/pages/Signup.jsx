@@ -11,13 +11,11 @@ export default function Signup({ onLogin }) {
   const [error, setError] = useState("");
 
   const emailIsValid = (value) => {
-    // Lightweight validation: relies on browser validation too
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value).trim());
   };
 
   const passwordIsValid = (value) => {
     const v = String(value || "");
-    // At least 8 chars, contains at least one Unicode letter and one Unicode number
     return (
       v.length >= 8 &&
       /\p{L}/u.test(v) &&
@@ -41,11 +39,8 @@ export default function Signup({ onLogin }) {
 
     try {
       const user = await Promise.resolve(signup({ name, email, password }));
-
-      // ✅ update App state
       onLogin?.(user);
 
-      // ✅ go to dashboard immediately
       navigate("/dashboard", { replace: true });
     } catch (err) {
       const msg = String(err?.message || "");

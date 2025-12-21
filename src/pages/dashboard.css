@@ -69,7 +69,7 @@ body {
 }
 
 .dash-section h2 {
-  font-size: 1.1rem;
+  font-size: 1.7rem;
   font-weight: 600;
   color: #1a1a1a;
 }
@@ -110,40 +110,60 @@ body {
   transform: translateY(-1px);
 }
 
+.section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   
+  text-align: center;    
+  margin-bottom: 0.5rem;
+}
+
+.section-icon {
+  font-size: 3.2rem;     
+  margin-bottom: 0.3rem; 
+}
+
 .app-navbar {
   position: sticky;
   top: 0;
   z-index: 999;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.2rem 2.5rem;
 
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+  padding: 1rem 2rem;
+  background: rgba(11, 79, 163, 0.65);
+  backdrop-filter: blur(12px);
+  border-bottom: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  color:#1a1a1a;
+
+
 }
 
+/* NAVIGATION LINKS */
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem; 
 }
 
 .nav-links a {
   text-decoration: none;
-  color: #1a1a1a;
+  color: white;
   font-weight: 500;
   position: relative;
+  padding: 0.3rem 0;
 }
 
 .nav-links a::after {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -6px;
+  bottom: -4px;
   width: 0%;
   height: 2px;
-  background: #4a90e2;
+  background: rgba(255, 255, 255, 0.7);
   transition: width 0.25s ease;
 }
 
@@ -151,24 +171,29 @@ body {
   width: 100%;
 }
 
+/* USER SECTION */
 .nav-user {
   display: flex;
   align-items: center;
   gap: 1rem;
   font-size: 0.95rem;
+  color: white;
 }
 
 .nav-user button {
-  background: transparent;
-  border: 1px solid #ddd;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   padding: 0.45rem 0.9rem;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  color: white;
+
+  transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .nav-user button:hover {
-  background: #f2f2f2;
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-2px);
 }
 
 @keyframes fadeInUp {

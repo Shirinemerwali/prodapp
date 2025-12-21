@@ -4,22 +4,6 @@
 
 const API_BASE = import.meta.env.VITE_API_BASE || "";
 
-const USER_KEY = "user";
-
-export function setStoredUser(user) {
-  if (user) localStorage.setItem(USER_KEY, JSON.stringify(user));
-  else localStorage.removeItem(USER_KEY);
-}
-
-export function getStoredUser() {
-  const raw = localStorage.getItem(USER_KEY);
-  return raw ? JSON.parse(raw) : null;
-}
-
-export function isLoggedIn() {
-  return Boolean(getStoredUser());
-}
-
 function apiUrl(path) {
   const p = path.startsWith("/") ? path : `/${path}`;
   return API_BASE ? `${API_BASE}${p}` : p;
@@ -69,7 +53,7 @@ export async function signup({ name, email, password }) {
 }
 
 export async function getCurrentUser() {
-  return apiRequest("/api/me", {}, true); // allow401 => returns null if not logged in
+  return apiRequest("/api/me", {}, true); 
 }
 
 export async function logout() {

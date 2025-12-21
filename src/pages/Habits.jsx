@@ -162,7 +162,7 @@ function Habits() {
 
       <div className="habits-container">
 
-        <h1 className="habits-title">Mina Vanor</h1>
+        <h1 className="habits-title">Mina Rutiner</h1>
 
         <div className="filter-sort-bar">
           <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)}>

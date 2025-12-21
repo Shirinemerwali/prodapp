@@ -80,7 +80,13 @@ export default function Dashboard({ user }) {
       <div className="dashboard-sections">
         {/* ✅ Sektion 1 – Ärenden */}
         <section className="dash-section">
-          <h2>Senaste ej utförda ärenden</h2>
+          <div className="section-header">
+            <div className="section-icon">📋</div>
+            <h2>
+              Ärenden
+            </h2>
+            <h3>Nyligen tillagda</h3>
+          </div>
           <ul>
             {todos.map((todo) => (
               <li key={todo.id}>
@@ -91,22 +97,15 @@ export default function Dashboard({ user }) {
           <button onClick={() => navigate("/todos")}>Visa alla ärenden</button>
         </section>
 
-        {/* ✅ Sektion 2 – Rutiner */}
-        <section className="dash-section">
-          <h2>Rutiner med flest repetitioner</h2>
-          <ul>
-            {habits.map((habit) => (
-              <li key={habit.id}>
-                {habit.title} – {habit.reps} repetitioner
-              </li>
-            ))}
-          </ul>
-          <button onClick={() => navigate("/habits")}>Visa alla rutiner</button>
-        </section>
-
         {/* ✅ Sektion 3 – Händelser */}
         <section className="dash-section">
-          <h2>Nästkommande händelser</h2>
+          <div className="section-header">
+            <div className="section-icon">📅</div>
+            <h2>
+              Events
+            </h2>
+            <h3>Kommande händelser</h3>
+          </div>
           <ul>
             {events.map((event) => (
               <li key={event.id}>
@@ -117,6 +116,24 @@ export default function Dashboard({ user }) {
           <button onClick={() => navigate("/events")}>
             Visa alla händelser
           </button>
+        </section>
+
+        {/* ✅ Sektion 2 – Rutiner */}
+        <section className="dash-section">
+          <div className="section-header">
+            <div className="section-icon">⭐</div>
+            <h2>Rutiner </h2>
+            <h3>Flest repetitioner</h3>
+            
+          </div>
+          <ul>
+            {habits.map((habit) => (
+              <li key={habit.id}>
+                {habit.title} – {habit.reps} repetitioner
+              </li>
+            ))}
+          </ul>
+          <button onClick={() => navigate("/habits")}>Visa alla rutiner</button>
         </section>
       </div>
     </main>

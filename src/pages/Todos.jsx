@@ -5,7 +5,6 @@ import { TODO_CATEGORIES, getTodos, createTodo as createTodoApi, updateTodo as u
 
 function formatDate(yyyyMmDd) {
   if (!yyyyMmDd) return "—";
-  // Keep it simple & consistent with <input type="date" />
   return yyyyMmDd;
 }
 
@@ -16,18 +15,16 @@ function Todos() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [filterStatus, setFilterStatus] = useState(""); // "" | "done" | "open"
+  const [filterStatus, setFilterStatus] = useState(""); 
   const [selectedCategories, setSelectedCategories] = useState(new Set(TODO_CATEGORIES));
   const [sortOption, setSortOption] = useState("");
 
-  // Create form
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [estimate, setEstimate] = useState("");
   const [category, setCategory] = useState(TODO_CATEGORIES[0]);
   const [deadline, setDeadline] = useState("");
 
-  // Edit state
   const [editingId, setEditingId] = useState(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -58,14 +55,11 @@ function Todos() {
   const visibleTodos = useMemo(() => {
     let list = [...todos];
 
-    // Filter status
     if (filterStatus === "done") list = list.filter((t) => Boolean(t.done));
     if (filterStatus === "open") list = list.filter((t) => !t.done);
 
-    // Filter categories (multi)
     list = list.filter((t) => selectedCategories.has(t.category));
 
-    // Sort
     if (sortOption === "deadline-asc") {
       list.sort((a, b) => String(a.deadline || "").localeCompare(String(b.deadline || "")));
     }
@@ -81,11 +75,9 @@ function Todos() {
     }
 
     if (sortOption === "status-asc") {
-      // Open first
       list.sort((a, b) => Number(Boolean(a.done)) - Number(Boolean(b.done)));
     }
     if (sortOption === "status-desc") {
-      // Done first
       list.sort((a, b) => Number(Boolean(b.done)) - Number(Boolean(a.done)));
     }
 
@@ -105,7 +97,6 @@ function Todos() {
       const next = new Set(prev);
       if (next.has(cat)) next.delete(cat);
       else next.add(cat);
-      // Avoid empty selection (UX)
       if (next.size === 0) return prev;
       return next;
     });
