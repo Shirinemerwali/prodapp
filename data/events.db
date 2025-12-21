@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": 1766274321032,
+    "userId": 1766007589372,
+    "title": "Möte med teamet",
+    "description": "Morgonmöte med hela laget, inklusive kaffe!",
+    "start": "2025-12-24T08:00",
+    "end": "2025-12-24T08:30",
+    "createdAt": 1766274321032
+  },
+  {
+    "id": 1766274362323,
+    "userId": 1766007589372,
+    "title": "Lunch med familj",
+    "description": "Lunch med familjen",
+    "start": "2025-12-24T12:00",
+    "end": "2025-12-24T13:00",
+    "createdAt": 1766274362323
+  },
+  {
+    "id": 1766274403994,
+    "userId": 1766007589372,
+    "title": "Retro-möte",
+    "description": "Retrospect med dev-team!",
+    "start": "2025-12-26T15:00",
+    "end": "2025-12-26T16:00",
+    "createdAt": 1766274403994
+  }
+]

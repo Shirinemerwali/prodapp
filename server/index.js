@@ -36,6 +36,17 @@ const HABITS_DB_PATH = path.join(process.cwd(), "data", "habits.db");
 const TODOS_DB_PATH = path.join(process.cwd(), "data", "todos.db");
 const EVENTS_DB_PATH = path.join(process.cwd(), "data", "events.db");
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*\p{L})(?=.*\p{N}).{8,}$/u;
+
+function validateEmail(email) {
+  return emailRegex.test(email);
+}
+
+function validatePassword(password) {
+  return passwordRegex.test(password);
+}
+
 async function readJsonArray(filePath) {
   try {
     const raw = await fs.readFile(filePath, "utf-8");
@@ -68,11 +79,11 @@ function requireAuth(req, res, next) {
 
 app.get("/api/me", async (req, res) => {
   const userId = req.session?.userId;
-  if (!userId) return res.status(401).json({ error: "Not authenticated" });
+  if (!userId) return res.json(null);
 
   const users = await readJsonArray(USERS_DB_PATH);
   const user = users.find((u) => u.id === userId);
-  if (!user) return res.status(401).json({ error: "Not authenticated" });
+  if (!user) return res.json(null);
 
   res.json(safeUser(user));
 });
@@ -85,7 +96,20 @@ app.post("/api/logout", (req, res) => {
 
 app.post("/api/signup", async (req, res) => {
   const { name, email, password } = req.body || {};
-  if (!name || !email || !password) return res.status(400).json({ error: "Missing fields" });
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({ error: "Invalid email format" });
+  }
+
+  if (!validatePassword(password)) {
+    return res.status(400).json({
+      error:
+        "Password must be at least 8 characters and contain letters and numbers",
+    });
+  }
+
+  if (!name || !email || !password)
+    return res.status(400).json({ error: "Missing fields" });
 
   const users = await readJsonArray(USERS_DB_PATH);
   const e = String(email).trim().toLowerCase();
@@ -152,8 +176,11 @@ app.patch("/api/habits/:id", requireAuth, async (req, res) => {
   const updates = req.body || {};
 
   const habits = await readJsonArray(HABITS_DB_PATH);
-  const idx = habits.findIndex((h) => h.id === id && h.userId === req.session.userId);
-  if (idx === -1) return res.status(404).json({ error: "Habit not found" });
+  const idx = habits.findIndex(
+    (h) => h.id === id && h.userId === req.session.userId
+  );
+  if (idx === -1)
+    return res.status(404).json({ error: "Habit not found" });
 
   habits[idx] = {
     ...habits[idx],
@@ -171,9 +198,12 @@ app.delete("/api/habits/:id", requireAuth, async (req, res) => {
 
   const habits = await readJsonArray(HABITS_DB_PATH);
   const before = habits.length;
-  const next = habits.filter((h) => !(h.id === id && h.userId === req.session.userId));
+  const next = habits.filter(
+    (h) => !(h.id === id && h.userId === req.session.userId)
+  );
 
-  if (next.length === before) return res.status(404).json({ error: "Habit not found" });
+  if (next.length === before)
+    return res.status(404).json({ error: "Habit not found" });
 
   await writeJsonArray(HABITS_DB_PATH, next);
   res.json({ ok: true });
@@ -190,7 +220,8 @@ app.get("/api/todos", requireAuth, async (req, res) => {
 });
 
 app.post("/api/todos", requireAuth, async (req, res) => {
-  const { title, description, done, estimate, category, deadline } = req.body || {};
+  const { title, description, done, estimate, category, deadline } =
+    req.body || {};
   if (!title || !category || !deadline) {
     return res.status(400).json({
       error: "Title, category and deadline are required",
@@ -222,9 +253,12 @@ app.patch("/api/todos/:id", requireAuth, async (req, res) => {
   const updates = req.body || {};
 
   const todos = await readJsonArray(TODOS_DB_PATH);
-  const idx = todos.findIndex((t) => t.id === id && t.userId === req.session.userId);
+  const idx = todos.findIndex(
+    (t) => t.id === id && t.userId === req.session.userId
+  );
 
-  if (idx === -1) return res.status(404).json({ error: "Todo not found" });
+  if (idx === -1)
+    return res.status(404).json({ error: "Todo not found" });
 
   todos[idx] = {
     ...todos[idx],
@@ -242,9 +276,12 @@ app.delete("/api/todos/:id", requireAuth, async (req, res) => {
 
   const todos = await readJsonArray(TODOS_DB_PATH);
   const before = todos.length;
-  const next = todos.filter((t) => !(t.id === id && t.userId === req.session.userId));
+  const next = todos.filter(
+    (t) => !(t.id === id && t.userId === req.session.userId)
+  );
 
-  if (next.length === before) return res.status(404).json({ error: "Todo not found" });
+  if (next.length === before)
+    return res.status(404).json({ error: "Todo not found" });
 
   await writeJsonArray(TODOS_DB_PATH, next);
   res.json({ ok: true });

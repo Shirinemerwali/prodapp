@@ -3,26 +3,27 @@ import { Link, useNavigate } from "react-router-dom";
 function Navbar({ user, onLogout }) {
   const navigate = useNavigate();
 
-  function handleLogout() {
-    onLogout?.();
-    navigate("/", { replace: true });
+  async function handleLogout() {
+    await onLogout?.(); // ✅ wait for state changes to happen
+    // ✅ no navigate() here
   }
 
   return (
-    <nav className="app-navbar">
-      <div className="nav-links">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/todos">Tasks</Link>
-        <Link to="/habits">Habits</Link>
-        <Link to="/events">Events</Link>
-      </div>
+    <nav style={{ padding: "1rem", display: "flex", gap: "1rem", alignItems: "center" }}>
+      <Link to="/dashboard">Dashboard</Link>
+      <Link to="/todos">Todos</Link>
+      <Link to="/habits">Habits</Link>
+      <Link to="/events">Events</Link>
 
-      <div className="nav-user">
-        {user?.name && <span>Hi, {user.name} 💛</span>}
-        <button onClick={handleLogout}>Log out</button>
+      <div style={{ marginLeft: "auto", display: "flex", gap: "1rem", alignItems: "center" }}>
+        {user?.name && <span style={{ opacity: 0.8 }}>Hej, {user.name}</span>}
+        <button type="button" onClick={handleLogout}>
+          Logga ut
+        </button>
       </div>
     </nav>
   );
 }
 
 export default Navbar;
+
