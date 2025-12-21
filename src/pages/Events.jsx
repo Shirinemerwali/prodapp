@@ -160,7 +160,7 @@ function Events() {
   return (
     <div className="events-wrapper events">
       <div className="events-container">
-        <h1 className="events-title">Mina Händelser</h1>
+        <h1 className="events-title">Mina Events</h1>
         
         <div className="filter-sort-bar">
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>

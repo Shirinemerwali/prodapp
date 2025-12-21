@@ -11,7 +11,7 @@ function Navbar({ user, onLogout }) {
       <div className="nav-links">
         <Link to="/dashboard">Startsida</Link>
         <Link to="/todos">Ärenden</Link>
-        <Link to="/events">Händelser</Link>
+        <Link to="/events">Events</Link>
         <Link to="/habits">Rutiner</Link>
       </div>
 

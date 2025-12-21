@@ -101,7 +101,7 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">📅</div>
             <h2>
-              Händelser - kommande
+              Events - kommande
             </h2>
           </div>
           <ul>
