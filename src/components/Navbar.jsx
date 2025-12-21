@@ -1,11 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 
 function Navbar({ user, onLogout }) {
-  const navigate = useNavigate();
-
   async function handleLogout() {
-    await onLogout?.(); // ✅ wait for state changes to happen
-    // ✅ no navigate() here
+    await onLogout?.(); 
   }
 
   return (

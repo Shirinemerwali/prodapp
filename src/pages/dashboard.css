@@ -113,14 +113,14 @@ body {
 .section-header {
   display: flex;
   flex-direction: column;
-  align-items: center;   /* Centrerar emoji + h2 horisontellt */
-  text-align: center;    /* Centrerar texten i h2 */
+  align-items: center;   
+  text-align: center;    
   margin-bottom: 0.5rem;
 }
 
 .section-icon {
-  font-size: 3.2rem;     /* Stor emoji */
-  margin-bottom: 0.3rem; /* Lite luft mellan emoji och h2 */
+  font-size: 3.2rem;     
+  margin-bottom: 0.3rem; 
 }
 
 .app-navbar {
@@ -133,7 +133,7 @@ body {
   justify-content: space-between;
 
   padding: 1rem 2rem;
-  background: rgba(11, 79, 163, 0.65); /* #0b4fa3 med transparens */
+  background: rgba(11, 79, 163, 0.65);
   backdrop-filter: blur(12px);
   border-bottom: none;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
@@ -145,7 +145,7 @@ body {
 /* NAVIGATION LINKS */
 .nav-links {
   display: flex;
-  gap: 1.5rem; /* mindre gap */
+  gap: 1.5rem; 
 }
 
 .nav-links a {

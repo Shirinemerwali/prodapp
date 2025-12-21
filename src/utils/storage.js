@@ -69,7 +69,7 @@ export async function signup({ name, email, password }) {
 }
 
 export async function getCurrentUser() {
-  return apiRequest("/api/me", {}, true); // allow401 => returns null if not logged in
+  return apiRequest("/api/me", {}, true); 
 }
 
 export async function logout() {

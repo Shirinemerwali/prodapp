@@ -150,7 +150,6 @@ function Events() {
 
   const now = new Date();
   let filtered = [...events];
-  // sort always by start time
   filtered.sort((a, b) => new Date(a.start) - new Date(b.start));
   if (filter === "upcoming") {
     filtered = filtered.filter((ev) => new Date(ev.start) >= now);
@@ -162,7 +161,7 @@ function Events() {
     <div className="events-wrapper events">
       <div className="events-container">
         <h1 className="events-title">Mina Händelser</h1>
-        {/* Filter */}
+        
         <div className="filter-sort-bar">
           <select value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="">Alla</option>
@@ -170,14 +169,14 @@ function Events() {
             <option value="past">Tidigare</option>
           </select>
         </div>
-        {/* Toggle form */}
+
         <button
           className="toggle-form-btn"
           onClick={() => setShowForm(!showForm)}
         >
           {showForm ? "Stäng formulär" : "Lägg till ny händelse"}
         </button>
-        {/* Create form */}
+        
         {showForm && (
           <div className="event-form">
             <h2>Ny händelse</h2>
@@ -211,7 +210,7 @@ function Events() {
         )}
         {error && <p className="error">{error}</p>}
         {loading && <p>Laddar…</p>}
-        {/* Event list */}
+        
         <div className="event-list">
           {!loading &&
             filtered.map((ev) => {
