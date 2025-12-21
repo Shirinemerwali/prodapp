@@ -83,8 +83,9 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">📋</div>
             <h2>
-              Ärenden - ej slutförda
+              Ärenden
             </h2>
+            <h3>Nyligen tillagda</h3>
           </div>
           <ul>
             {todos.map((todo) => (
@@ -101,8 +102,9 @@ export default function Dashboard({ user }) {
           <div className="section-header">
             <div className="section-icon">📅</div>
             <h2>
-              Events - kommande
+              Events
             </h2>
+            <h3>Kommande händelser</h3>
           </div>
           <ul>
             {events.map((event) => (
@@ -120,9 +122,9 @@ export default function Dashboard({ user }) {
         <section className="dash-section">
           <div className="section-header">
             <div className="section-icon">⭐</div>
-            <h2>
-              Rutiner - Flest repetitioner
-            </h2>
+            <h2>Rutiner </h2>
+            <h3>Flest repetitioner</h3>
+            
           </div>
           <ul>
             {habits.map((habit) => (
